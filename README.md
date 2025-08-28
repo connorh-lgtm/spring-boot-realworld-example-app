@@ -79,3 +79,7 @@ Use spotless for code format.
 # Help
 
 Please fork and PR to improve the project.
+
+## Contributing
+
+We welcome contributions to this Spring Boot RealWorld example application!
