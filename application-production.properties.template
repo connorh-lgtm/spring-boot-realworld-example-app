@@ -1,0 +1,60 @@
+# Production Configuration Template for Java 17 Migration
+# Copy this file to application-production.properties and configure for your environment
+
+# Database Configuration
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:sqlite:/app/data/production.db}
+spring.datasource.driver-class-name=org.sqlite.JDBC
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:}
+
+# Jackson Configuration
+spring.jackson.deserialization.UNWRAP_ROOT_VALUE=true
+
+# Default Image Configuration
+image.default=${DEFAULT_IMAGE_URL:https://static.productionready.io/images/smiley-cyrus.jpg}
+
+# JWT Configuration - MUST be externalized for production
+jwt.secret=${JWT_SECRET}
+jwt.sessionTime=${JWT_SESSION_TIME:86400}
+
+# MyBatis Configuration
+mybatis.configuration.cache-enabled=true
+mybatis.configuration.default-statement-timeout=${MYBATIS_TIMEOUT:3000}
+mybatis.configuration.map-underscore-to-camel-case=true
+mybatis.configuration.use-generated-keys=true
+mybatis.type-handlers-package=io.spring.infrastructure.mybatis
+mybatis.mapper-locations=mapper/*.xml
+
+# Production Logging Configuration
+logging.level.root=${LOGGING_LEVEL_ROOT:INFO}
+logging.level.io.spring=${LOGGING_LEVEL_IO_SPRING:INFO}
+logging.level.io.spring.infrastructure.mybatis.readservice.ArticleReadService=${LOGGING_LEVEL_MYBATIS:WARN}
+logging.level.io.spring.infrastructure.mybatis.mapper=${LOGGING_LEVEL_MYBATIS:WARN}
+
+# Server Configuration
+server.port=${SERVER_PORT:8080}
+server.compression.enabled=true
+server.compression.mime-types=text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+server.compression.min-response-size=1024
+
+# Actuator Configuration for Monitoring
+management.endpoints.web.exposure.include=${MANAGEMENT_ENDPOINTS:health,metrics,info}
+management.endpoint.health.show-details=${HEALTH_DETAILS:when-authorized}
+management.endpoint.metrics.enabled=true
+management.metrics.export.prometheus.enabled=${PROMETHEUS_ENABLED:false}
+
+# Connection Pool Configuration
+spring.datasource.hikari.maximum-pool-size=${DB_POOL_SIZE:10}
+spring.datasource.hikari.minimum-idle=${DB_POOL_MIN_IDLE:5}
+spring.datasource.hikari.connection-timeout=${DB_CONNECTION_TIMEOUT:20000}
+spring.datasource.hikari.idle-timeout=${DB_IDLE_TIMEOUT:300000}
+spring.datasource.hikari.max-lifetime=${DB_MAX_LIFETIME:1200000}
+
+# Security Configuration
+spring.security.require-ssl=${REQUIRE_SSL:false}
+
+# CORS Configuration (adjust for your frontend domains)
+cors.allowed-origins=${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:4200}
+cors.allowed-methods=${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+cors.allowed-headers=${CORS_ALLOWED_HEADERS:*}
+cors.allow-credentials=${CORS_ALLOW_CREDENTIALS:true}

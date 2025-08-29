@@ -44,7 +44,7 @@ It uses a ~~H2 in-memory database~~ sqlite database (for easy local test without
 
 # Getting started
 
-You'll need Java 11 installed.
+You'll need Java 17 installed.
 
     ./gradlew bootRun
 
@@ -59,6 +59,18 @@ You'll need Docker installed.
 	
     ./gradlew bootBuildImage --imageName spring-boot-realworld-example-app
     docker run -p 8081:8080 spring-boot-realworld-example-app
+
+## Production Deployment with Java 17
+
+For production deployment, use the Java 17 optimized container:
+
+    ./gradlew bootBuildImage --imageName spring-boot-realworld-example-app:java17
+    docker run -p 8080:8080 \
+      -e JWT_SECRET="your-production-jwt-secret" \
+      -e SPRING_PROFILES_ACTIVE="production" \
+      spring-boot-realworld-example-app:java17
+
+See [JAVA_17_DEPLOYMENT_STRATEGY.md](JAVA_17_DEPLOYMENT_STRATEGY.md) for comprehensive production deployment guidance.
 
 # Try it out with a RealWorld frontend
 
