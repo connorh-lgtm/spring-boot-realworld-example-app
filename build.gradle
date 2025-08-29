@@ -16,7 +16,8 @@ spotless {
             include '**/*.java'
             exclude 'build/generated/**/*.*', 'build/generated-examples/**/*.*'
         }
-        googleJavaFormat('1.17.0')
+        googleJavaFormat('1.17.0').aosp()
+        toggleOffOn()
     }
 }
 
@@ -57,6 +58,32 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task performanceTest(type: Test) {
+    description = 'Runs performance benchmark tests'
+    group = 'verification'
+    
+    useJUnitPlatform {
+        includeTags 'performance'
+    }
+    
+    include '**/Java17PerformanceBenchmarkTest.class'
+    
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+    
+    systemProperty 'spring.profiles.active', 'performance'
+    
+    jvmArgs = [
+        '-Xms256m',
+        '-Xmx1g',
+        '-XX:+UseG1GC',
+        '-XX:+UseStringDeduplication',
+        '-XX:MaxGCPauseMillis=100'
+    ]
 }
 
 tasks.named('clean') {
