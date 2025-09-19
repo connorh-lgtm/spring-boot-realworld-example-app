@@ -11,6 +11,11 @@ public class InvalidRequestException extends RuntimeException {
     this.errors = errors;
   }
 
+  public InvalidRequestException(String message) {
+    super(message);
+    this.errors = null;
+  }
+
   public Errors getErrors() {
     return errors;
   }
