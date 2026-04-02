@@ -54,7 +54,6 @@ public class ArticleApiTest extends TestWithCurrentUser {
 
   @Test
   public void should_read_article_success() throws Exception {
-    String slug = "test-new-article";
     Instant time = Instant.now();
     Article article =
         new Article(
@@ -64,6 +63,7 @@ public class ArticleApiTest extends TestWithCurrentUser {
             Arrays.asList("java", "spring", "jpg"),
             user.getId(),
             time);
+    String slug = article.getSlug();
     ArticleData articleData = TestHelper.getArticleDataFromArticleAndUser(article, user);
 
     when(articleQueryService.findBySlug(eq(slug), eq(null))).thenReturn(Optional.of(articleData));

@@ -264,20 +264,21 @@ public class Java17DatabaseIntegrationTest {
 
   @Test
   public void shouldValidateInstantFieldsInComplexQueries() {
-    for (int i = 0; i < 5; i++) {
-      Article article = new Article(
-          "Query Test Article " + i,
-          "Description " + i,
-          "Body " + i,
-          Arrays.asList("query", "test"),
-          testUser.getId()
-      );
-      articleRepository.save(article);
-    }
-    
+    List<Article> savedArticles = IntStream.range(0, 5)
+        .mapToObj(i -> new Article(
+            "Query Test Article " + i,
+            "Description " + i,
+            "Body " + i,
+            Arrays.asList("query", "test"),
+            testUser.getId()
+        ))
+        .toList();
+
+    savedArticles.forEach(articleRepository::save);
+
     assertDoesNotThrow(() -> {
-      List<Article> allArticles = IntStream.range(0, 5)
-          .mapToObj(i -> articleRepository.findBySlug(Article.toSlug("Query Test Article " + i)))
+      List<Article> allArticles = savedArticles.stream()
+          .map(a -> articleRepository.findById(a.getId()))
           .filter(Optional::isPresent)
           .map(Optional::get)
           .toList();

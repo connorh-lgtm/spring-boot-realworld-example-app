@@ -10,7 +10,9 @@ import io.spring.infrastructure.repository.MyBatisCommentRepository;
 import io.spring.infrastructure.repository.MyBatisUserRepository;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,7 @@ public class Java17GraphQLSimpleTest {
 
   @Test
   public void shouldValidateJava17StreamProcessingWithArticles() {
+    List<Article> savedArticles = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       Article article = new Article(
           "Bulk Article " + i,
@@ -102,14 +105,14 @@ public class Java17GraphQLSimpleTest {
           testUser.getId()
       );
       articleRepository.save(article);
+      savedArticles.add(article);
     }
 
     Instant queryStart = Instant.now();
     
     assertDoesNotThrow(() -> {
-      long count = Arrays.asList(0, 1, 2, 3, 4)
-          .stream()
-          .map(i -> articleRepository.findBySlug(Article.toSlug("Bulk Article " + i)))
+      long count = savedArticles.stream()
+          .map(a -> articleRepository.findById(a.getId()))
           .filter(opt -> opt.isPresent())
           .map(opt -> opt.get())
           .filter(article -> article.getCreatedAt() != null)

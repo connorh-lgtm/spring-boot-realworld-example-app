@@ -38,7 +38,7 @@ public class Article {
       String userId,
       Instant createdAt) {
     this.id = UUID.randomUUID().toString();
-    this.slug = toSlug(title);
+    this.slug = toSlug(title, this.id);
     this.title = title;
     this.description = description;
     this.body = body;
@@ -51,7 +51,7 @@ public class Article {
   public void update(String title, String description, String body) {
     if (!Util.isEmpty(title)) {
       this.title = title;
-      this.slug = toSlug(title);
+      this.slug = toSlug(title, this.id);
       this.updatedAt = Instant.now();
     }
     if (!Util.isEmpty(description)) {
@@ -66,5 +66,15 @@ public class Article {
 
   public static String toSlug(String title) {
     return title.toLowerCase().replaceAll("[\\&|[\\uFE30-\\uFFA0]|\\’|\\”|\\s\\?\\,\\.]+", "-");
+  }
+
+  public static String toSlug(String title, String id) {
+    String base = toSlug(title);
+    String suffix = id.substring(0, Math.min(8, id.length()));
+    int maxBaseLength = 255 - suffix.length() - 1;
+    if (base.length() > maxBaseLength) {
+      base = base.substring(0, maxBaseLength);
+    }
+    return base + "-" + suffix;
   }
 }

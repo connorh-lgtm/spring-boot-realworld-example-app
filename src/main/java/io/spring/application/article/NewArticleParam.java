@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NewArticleParam {
   @NotBlank(message = "can't be empty")
-  @DuplicatedArticleConstraint
   private String title;
 
   @NotBlank(message = "can't be empty")
