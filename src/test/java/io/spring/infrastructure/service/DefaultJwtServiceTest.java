@@ -73,4 +73,19 @@ public class DefaultJwtServiceTest {
         exception.getMessage().contains("JWT_SECRET"),
         "Exception message should mention JWT_SECRET environment variable");
   }
+
+  @Test
+  public void should_reject_dev_default_in_performance_profile() {
+    IllegalStateException exception =
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () ->
+                new DefaultJwtService(
+                    "dev-only-default-secret-do-not-use-in-production-nRvyYC4soFxBdZ",
+                    3600,
+                    "performance"));
+    Assertions.assertTrue(
+        exception.getMessage().contains("JWT_SECRET"),
+        "Exception message should mention JWT_SECRET environment variable");
+  }
 }
