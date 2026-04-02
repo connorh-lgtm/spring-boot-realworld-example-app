@@ -26,7 +26,8 @@ public class MyBatisArticleRepository implements ArticleRepository {
         articleMapper.update(article);
       }
     } catch (org.springframework.dao.DuplicateKeyException e) {
-      throw new IllegalArgumentException("An article with this slug already exists", e);
+      throw new io.spring.api.exception.DuplicateArticleException(
+          "An article with this slug already exists", e);
     }
   }
 

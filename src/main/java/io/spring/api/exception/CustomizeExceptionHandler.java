@@ -93,9 +93,9 @@ public class CustomizeExceptionHandler extends ResponseEntityExceptionHandler {
     return new ErrorResource(errors);
   }
 
-  @ExceptionHandler({IllegalArgumentException.class})
-  public ResponseEntity<Object> handleIllegalArgument(
-      IllegalArgumentException e, WebRequest request) {
+  @ExceptionHandler({DuplicateArticleException.class})
+  public ResponseEntity<Object> handleDuplicateArticle(
+      DuplicateArticleException e, WebRequest request) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
