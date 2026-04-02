@@ -125,14 +125,15 @@ JAVA_CMD="${JAVA_CMD} --spring.profiles.active=${SPRING_PROFILE}"
 JAVA_CMD="${JAVA_CMD} --server.port=${PORT}"
 
 if [ "${PROFILE}" = "production" ]; then
-    if [ -n "${JWT_SECRET}" ]; then
-        JAVA_CMD="${JAVA_CMD} --jwt.secret=${JWT_SECRET}"
-    else
+    if [ -z "${JWT_SECRET}" ]; then
         print_warning "JWT_SECRET environment variable not set for production"
+        print_warning "The application will fail to start without a valid JWT secret"
     fi
+    export JWT_SECRET
 fi
 
-echo "Executing: ${JAVA_CMD}"
+print_info "Starting application..."
+echo ""
 echo ""
 
 exec ${JAVA_CMD}

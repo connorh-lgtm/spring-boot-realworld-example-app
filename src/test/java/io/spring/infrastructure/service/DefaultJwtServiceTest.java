@@ -14,7 +14,8 @@ public class DefaultJwtServiceTest {
   @BeforeEach
   public void setUp() {
     jwtService =
-        new DefaultJwtService("123123123123123123123123123123123123123123123123123123123123", 3600);
+        new DefaultJwtService(
+            "123123123123123123123123123123123123123123123123123123123123", 3600, "default");
   }
 
   @Test
@@ -38,5 +39,53 @@ public class DefaultJwtServiceTest {
     String token =
         "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhaXNlbnNpeSIsImV4cCI6MTUwMjE2MTIwNH0.SJB-U60WzxLYNomqLo4G3v3LzFxJKuVrIud8D8Lz3-mgpo9pN1i7C8ikU_jQPJGm8HsC1CquGMI-rSuM7j6LDA";
     Assertions.assertFalse(jwtService.getSubFromToken(token).isPresent());
+  }
+
+  @Test
+  public void should_accept_valid_secret() {
+    Assertions.assertDoesNotThrow(
+        () ->
+            new DefaultJwtService(
+                "this-is-a-valid-secret-that-is-at-least-32-bytes-long", 3600, "default"));
+  }
+
+  @Test
+  public void should_reject_short_secret() {
+    IllegalStateException exception =
+        Assertions.assertThrows(
+            IllegalStateException.class, () -> new DefaultJwtService("short", 3600, "default"));
+    Assertions.assertTrue(
+        exception.getMessage().contains("at least 32 bytes"),
+        "Exception message should mention minimum key length");
+  }
+
+  @Test
+  public void should_reject_dev_default_in_production() {
+    IllegalStateException exception =
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () ->
+                new DefaultJwtService(
+                    "dev-only-default-secret-do-not-use-in-production-nRvyYC4soFxBdZ",
+                    3600,
+                    "production"));
+    Assertions.assertTrue(
+        exception.getMessage().contains("JWT_SECRET"),
+        "Exception message should mention JWT_SECRET environment variable");
+  }
+
+  @Test
+  public void should_reject_dev_default_in_performance_profile() {
+    IllegalStateException exception =
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () ->
+                new DefaultJwtService(
+                    "dev-only-default-secret-do-not-use-in-production-nRvyYC4soFxBdZ",
+                    3600,
+                    "performance"));
+    Assertions.assertTrue(
+        exception.getMessage().contains("JWT_SECRET"),
+        "Exception message should mention JWT_SECRET environment variable");
   }
 }

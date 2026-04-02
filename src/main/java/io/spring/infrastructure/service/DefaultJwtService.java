@@ -21,8 +21,20 @@ public class DefaultJwtService implements JwtService {
 
   @Autowired
   public DefaultJwtService(
-      @Value("${jwt.secret}") String secret, @Value("${jwt.sessionTime}") int sessionTime) {
+      @Value("${jwt.secret}") String secret,
+      @Value("${jwt.sessionTime}") int sessionTime,
+      @Value("${spring.profiles.active:default}") String activeProfile) {
     this.sessionTime = sessionTime;
+    if (secret.contains("dev-only-default")
+        && (activeProfile.contains("production") || activeProfile.contains("performance"))) {
+      throw new IllegalStateException(
+          "JWT_SECRET environment variable must be set for production. "
+              + "Do not use the default development secret in production.");
+    }
+    if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+      throw new IllegalStateException(
+          "JWT secret must be at least 32 bytes for HMAC-SHA256 security.");
+    }
     this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
   }
 

@@ -65,7 +65,11 @@ public class Article {
   }
 
   public static String toSlug(String title) {
-    return title.toLowerCase().replaceAll("[\\&|[\\uFE30-\\uFFA0]|\\’|\\”|\\s\\?\\,\\.]+", "-");
+    return title
+        .toLowerCase()
+        .replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}]+", "-")
+        .replaceAll("-+", "-")
+        .replaceAll("^-|-$", "");
   }
 
   public static String toSlug(String title, String id) {
