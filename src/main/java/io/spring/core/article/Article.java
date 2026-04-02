@@ -71,6 +71,10 @@ public class Article {
   public static String toSlug(String title, String id) {
     String base = toSlug(title);
     String suffix = id.substring(0, Math.min(8, id.length()));
+    int maxBaseLength = 255 - suffix.length() - 1;
+    if (base.length() > maxBaseLength) {
+      base = base.substring(0, maxBaseLength);
+    }
     return base + "-" + suffix;
   }
 }
