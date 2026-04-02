@@ -7,8 +7,7 @@ import io.spring.application.user.UpdateUserCommand;
 import io.spring.application.user.UpdateUserParam;
 import io.spring.application.user.UserService;
 import io.spring.core.user.User;
-import java.util.HashMap;
-import java.util.Map;
+import io.spring.api.response.ResponseWrappers;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +47,7 @@ public class CurrentUserApi {
     return ResponseEntity.ok(userResponse(new UserWithToken(userData, token.split(" ")[1])));
   }
 
-  private Map<String, Object> userResponse(UserWithToken userWithToken) {
-    return new HashMap<String, Object>() {
-      {
-        put("user", userWithToken);
-      }
-    };
+  private ResponseWrappers.UserResponse userResponse(UserWithToken userWithToken) {
+    return new ResponseWrappers.UserResponse(userWithToken);
   }
 }

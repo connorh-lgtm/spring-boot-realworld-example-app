@@ -8,7 +8,7 @@ import io.spring.core.article.ArticleRepository;
 import io.spring.core.favorite.ArticleFavorite;
 import io.spring.core.favorite.ArticleFavoriteRepository;
 import io.spring.core.user.User;
-import java.util.HashMap;
+import io.spring.api.response.ResponseWrappers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,13 +50,8 @@ public class ArticleFavoriteApi {
     return responseArticleData(articleQueryService.findBySlug(slug, user).get());
   }
 
-  private ResponseEntity<HashMap<String, Object>> responseArticleData(
+  private ResponseEntity<ResponseWrappers.ArticleResponse> responseArticleData(
       final ArticleData articleData) {
-    return ResponseEntity.ok(
-        new HashMap<String, Object>() {
-          {
-            put("article", articleData);
-          }
-        });
+    return ResponseEntity.ok(new ResponseWrappers.ArticleResponse(articleData));
   }
 }

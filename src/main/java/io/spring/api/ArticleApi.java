@@ -10,8 +10,7 @@ import io.spring.core.article.Article;
 import io.spring.core.article.ArticleRepository;
 import io.spring.core.service.AuthorizationService;
 import io.spring.core.user.User;
-import java.util.HashMap;
-import java.util.Map;
+import io.spring.api.response.ResponseWrappers;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -78,11 +77,7 @@ public class ArticleApi {
         .orElseThrow(ResourceNotFoundException::new);
   }
 
-  private Map<String, Object> articleResponse(ArticleData articleData) {
-    return new HashMap<String, Object>() {
-      {
-        put("article", articleData);
-      }
-    };
+  private ResponseWrappers.ArticleResponse articleResponse(ArticleData articleData) {
+    return new ResponseWrappers.ArticleResponse(articleData);
   }
 }
