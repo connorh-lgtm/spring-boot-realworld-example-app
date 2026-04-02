@@ -186,11 +186,30 @@ curl -X POST http://localhost:8080/graphql \
 ## Security Development
 
 ### JWT Configuration
-```java
-// JWT secret configuration
-jwt.secret=${JWT_SECRET:default-secret-key}
-jwt.sessionTime=86400
+
+The JWT signing secret is externalized via the `JWT_SECRET` environment variable. A dev-only
+default is provided so that local development and tests work without setting the variable, but
+**this default must never be used in production**.
+
+| Variable | Required in prod? | Default (dev only) | Description |
+|---|---|---|---|
+| `JWT_SECRET` | **Yes** | `dev-only-default-secret-do-not-use-in-production-nRvyYC4soFxBdZ` | HMAC-SHA signing key for JWTs. Must be kept secret. |
+| `JWT_SESSION_TIME` | No | `86400` (24 h) | Token lifetime in seconds. |
+
+```bash
+# Local development — no env var needed, the dev-only default is used automatically.
+./gradlew bootRun
+
+# Explicitly override for local testing:
+JWT_SECRET=my-custom-secret ./gradlew bootRun
+
+# Production — always set a strong, unique secret:
+export JWT_SECRET="<generate-a-secure-random-string>"
 ```
+
+> **⚠️ WARNING:** The dev-only default value is publicly visible in source control.
+> Never rely on it outside of local development or CI. In production, always set
+> `JWT_SECRET` to a cryptographically strong, unique value.
 
 ### Adding Secured Endpoints
 ```java
