@@ -93,6 +93,19 @@ public class CustomizeExceptionHandler extends ResponseEntityExceptionHandler {
     return new ErrorResource(errors);
   }
 
+  @ExceptionHandler({IllegalArgumentException.class})
+  public ResponseEntity<Object> handleIllegalArgument(
+      IllegalArgumentException e, WebRequest request) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    List<FieldErrorResource> errorResources = new ArrayList<>();
+    errorResources.add(new FieldErrorResource("article", "slug", "Duplicate", e.getMessage()));
+
+    ErrorResource error = new ErrorResource(errorResources);
+    return ResponseEntity.status(UNPROCESSABLE_ENTITY).headers(headers).body(error);
+  }
+
   private String getParam(String s) {
     String[] splits = s.split("\\.");
     if (splits.length == 1) {

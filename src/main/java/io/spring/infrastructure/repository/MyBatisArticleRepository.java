@@ -19,10 +19,14 @@ public class MyBatisArticleRepository implements ArticleRepository {
   @Override
   @Transactional
   public void save(Article article) {
-    if (articleMapper.findById(article.getId()) == null) {
-      createNew(article);
-    } else {
-      articleMapper.update(article);
+    try {
+      if (articleMapper.findById(article.getId()) == null) {
+        createNew(article);
+      } else {
+        articleMapper.update(article);
+      }
+    } catch (org.springframework.dao.DuplicateKeyException e) {
+      throw new IllegalArgumentException("An article with this slug already exists", e);
     }
   }
 
