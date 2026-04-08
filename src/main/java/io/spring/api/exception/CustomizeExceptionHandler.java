@@ -28,23 +28,33 @@ public class CustomizeExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<Object> handleInvalidRequest(RuntimeException e, WebRequest request) {
     InvalidRequestException ire = (InvalidRequestException) e;
 
-    List<FieldErrorResource> errorResources =
-        ire.getErrors().getFieldErrors().stream()
-            .map(
-                fieldError ->
-                    new FieldErrorResource(
-                        fieldError.getObjectName(),
-                        fieldError.getField(),
-                        fieldError.getCode(),
-                        fieldError.getDefaultMessage()))
-            .collect(Collectors.toList());
+    if (ire.getErrors() != null) {
+      List<FieldErrorResource> errorResources =
+          ire.getErrors().getFieldErrors().stream()
+              .map(
+                  fieldError ->
+                      new FieldErrorResource(
+                          fieldError.getObjectName(),
+                          fieldError.getField(),
+                          fieldError.getCode(),
+                          fieldError.getDefaultMessage()))
+              .collect(Collectors.toList());
 
-    ErrorResource error = new ErrorResource(errorResources);
+      ErrorResource error = new ErrorResource(errorResources);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
 
-    return handleExceptionInternal(e, error, headers, UNPROCESSABLE_ENTITY, request);
+      return handleExceptionInternal(e, error, headers, UNPROCESSABLE_ENTITY, request);
+    } else {
+      return ResponseEntity.status(UNPROCESSABLE_ENTITY)
+          .body(
+              new HashMap<String, Object>() {
+                {
+                  put("message", ire.getMessage());
+                }
+              });
+    }
   }
 
   @ExceptionHandler(InvalidAuthenticationException.class)
